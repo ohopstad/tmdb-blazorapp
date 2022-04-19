@@ -19,10 +19,10 @@ jobs:
           include-prerelease: true
       
       - name: dotnet publish
-        run: dotnet publish homepage.csproj -c Release -o release --nologo
+        run: dotnet publish homepage.csproj -c Release -o Release --nologo
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:
           branch: gh-pages
-          folder: release/wwwroot
+          folder: Release/wwwroot
