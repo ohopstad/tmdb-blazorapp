@@ -1,0 +1,28 @@
+name: Deploy to GitHub Pages
+
+on: 
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    
+jobs:
+  deploy-to-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: true
+      
+      - name: dotnet publish
+        run: dotnet publish homepage.csproj -c Release -o release --nologo
+      
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages
+          folder: release/wwwroot
