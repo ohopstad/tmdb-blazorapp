@@ -1,15 +1,65 @@
-﻿@page "/"
+﻿@page "/tmdb-blazorapp"
+@inject HttpClient Http
 
-<PageTitle>Friendly Development Blog</PageTitle>
+<PageTitle>(WIP!) Project pull-from-TMDB</PageTitle>
 
-<div id="main-title" style="width: 100%;">
-<img style="width: 100px; length: 100px; border-radius: 50%; display: inline-block;" src="https://media-exp1.licdn.com/dms/image/C5603AQF5-HeLZVHdjA/profile-displayphoto-shrink_400_400/0/1563810550013?e=1658966400&v=beta&t=M6_dzxpKtXreJF-2rc7XDU0E8hsYU2IC5tK5bC-h_u4"/>
-<h1>_Hello, world!</h1>
-</div>
+<h1>(WIP!) TMDB api fetching </h1>
 
-<p>
-    I'm a cyber-security professional specializing in secure development.
-     I currently work for Kongsberg Maritime, where
-     along with my team I develop industrial control systems for deployment on marine vessels.
-     I have developed software for monitoring network equipment in safety-critical control systems. 
-</p>
+<p>This component demonstrates fetching data from the TMDB api.</p>
+
+@if (movies == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var movie in movies)
+            {
+                <tr>
+                    <td>@movie.releaseDate</td>
+                    <td>@movie.title</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Movie> movies = new List<Movie>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var m = await getMovie(550);
+        
+        movies.Add(m);
+    }
+
+    async Task<Movie> getMovie(int id)
+    {
+        var ret = new Movie();
+
+        var content = await Http.GetFromJsonAsync<JsonElement>(
+            $"https://api.themoviedb.org/3/movie/{id}?api_key=1422303e78dc4243889e6e549813ff6d"
+            );
+
+        ret.releaseDate = content.GetProperty("release_date").ToString();
+        ret.title = content.GetProperty("original_title").ToString();
+
+        return ret;
+    }
+
+    public class Movie
+    {
+        public string? releaseDate { get; set; }
+        public string? title { get; set; }
+    }
+}
