@@ -19,7 +19,7 @@ jobs:
           include-prerelease: true
       
       - name: dotnet publish
-        run: dotnet publish homepage.csproj -c Release -o Release --nologo
+        run: dotnet publish src/BlazorWasm/ -c Release -o Release --nologo
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.0

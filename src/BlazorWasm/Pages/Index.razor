@@ -1,0 +1,47 @@
+﻿@page "/"
+@inject MoviedbServices.SearchService searchService
+
+<PageTitle>(WIP!) Project pull-from-TMDB</PageTitle>
+
+<h1>(WIP!) TMDB api fetching </h1>
+
+<EditForm Model="@searchModel" OnValidSubmit="@Search">
+    <InputText id="name" @bind-Value="searchModel.Title" />
+    <button type="submit">Submit</button>
+</EditForm>
+
+@if (movies != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var movie in movies)
+            {
+                <tr>
+                    <td>@movie.Title</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private ICollection<MediaModels.MovieModel>? movies;
+    private MoviedbServices.SearchModel searchModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.CompletedTask;
+        return;
+    }
+
+    async Task Search()
+    {
+        movies = await searchService.SearchMovie(searchModel);
+        StateHasChanged();
+    }
+}
