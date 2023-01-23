@@ -1,22 +1,20 @@
 ﻿@page "/"
-@inject HttpClient Http
+@inject MovieDBSearchService searchService
 
 <PageTitle>(WIP!) Project pull-from-TMDB</PageTitle>
 
 <h1>(WIP!) TMDB api fetching </h1>
 
-<p>This component demonstrates fetching data from the TMDB api.</p>
+<EditForm Model="@searchModel" OnValidSubmit="@Search">
+    <InputText id="name" @bind-Value="searchModel.Title" />
+    <button type="submit">Submit</button>
+</EditForm>
 
-@if (movies == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
+@if (movies != null)
 {
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
                 <th>Title</th>
             </tr>
         </thead>
@@ -24,8 +22,7 @@ else
             @foreach (var movie in movies)
             {
                 <tr>
-                    <td>@movie.releaseDate</td>
-                    <td>@movie.title</td>
+                    <td>@movie.Title</td>
                 </tr>
             }
         </tbody>
@@ -33,33 +30,17 @@ else
 }
 
 @code {
-    private List<Movie> movies = new List<Movie>();
+    private ICollection<MovieModel>? movies;
+    private SearchModel searchModel = new();
 
     protected override async Task OnInitializedAsync()
     {
-
-        var m = await getMovie(550);
-        
-        movies.Add(m);
+        await Task.CompletedTask;
+        return;
     }
 
-    async Task<Movie> getMovie(int id)
+    async Task Search()
     {
-        var ret = new Movie();
-
-        var content = await Http.GetFromJsonAsync<JsonElement>(
-            $"https://api.themoviedb.org/3/movie/{id}?api_key=1422303e78dc4243889e6e549813ff6d"
-            );
-
-        ret.releaseDate = content.GetProperty("release_date").ToString();
-        ret.title = content.GetProperty("original_title").ToString();
-
-        return ret;
-    }
-
-    public class Movie
-    {
-        public string? releaseDate { get; set; }
-        public string? title { get; set; }
+        movies = await searchService.SearchMovie(searchModel);
     }
 }
