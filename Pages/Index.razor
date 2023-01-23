@@ -42,5 +42,6 @@
     async Task Search()
     {
         movies = await searchService.SearchMovie(searchModel);
+        StateHasChanged();
     }
 }
